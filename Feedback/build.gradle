@@ -1,0 +1,77 @@
+apply plugin: 'com.android.application'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+    }
+}
+configurations.all {
+    exclude group: 'com.android.support', module: 'support-v4'
+    // other configurations
+}
+android {
+    compileSdkVersion 21
+    buildToolsVersion '23.0.2'
+    defaultConfig {
+        applicationId 'com.umeng.fb.example'
+        minSdkVersion 8
+        targetSdkVersion 21
+        versionCode 1
+        versionName '1.0'
+    }
+    signingConfigs {
+        config {
+            keyAlias 'AndroidDebugKey'
+            keyPassword 'android'
+
+            storeFile rootProject.file('accd_debug.keystore')
+            storePassword 'android'
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.config
+        }
+        release {
+            minifyEnabled true
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+    }
+    lintOptions {
+        abortOnError false
+    }
+    dexOptions {
+        preDexLibraries = false
+    }
+
+    sourceSets.main {
+        jniLibs.srcDir 'libs'
+    }
+    productFlavors {
+        acdd {
+            aaptOptions.additionalParameters '--ACDD-resoure-id', '0x72', '--ACDD-shared-resources', rootProject.file("public.xml").getAbsolutePath()
+        }
+        normal {
+        }
+    }
+}
+
+dependencies {
+   // provided 'com.android.support:support-v4:21.0.0'
+    compile 'com.umeng:message:2.4.1'
+    compile 'com.umeng:fb:latest.integration'
+    provided files('libs/android-support-v4.jar')
+}
+
+repositories {
+    jcenter()
+    maven { url "https://raw.githubusercontent.com/umeng/mvn-repo-umeng/master/repository" }
+}
+
+
